@@ -409,9 +409,15 @@ if(logoutBtn) {
 
 // ── RESTORE SESSION ON LOAD ──
 document.addEventListener('DOMContentLoaded', () => {
-  const storedUser = localStorage.getItem('rn_user');
-  if (storedUser) {
-    activateProfile(storedUser);
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("logout") === "true") {
+    localStorage.removeItem("rn_user");
+    window.history.replaceState({}, document.title, window.location.pathname);
+  } else {
+    const storedUser = localStorage.getItem('rn_user');
+    if (storedUser) {
+      activateProfile(storedUser);
+    }
   }
 });
 
