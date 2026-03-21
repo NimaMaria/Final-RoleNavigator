@@ -109,6 +109,7 @@ let loggedInName = '';
 function activateProfile(name){
   isLoggedIn = true;
   loggedInName = name || 'User';
+  localStorage.setItem('rn_user', loggedInName); // Save for persistence
   if(loginBtn) loginBtn.style.display='none';
   if(signupBtn) signupBtn.style.display='none';
   if(profileWrap) profileWrap.style.display='flex';
@@ -393,6 +394,9 @@ const logoutBtn = document.getElementById('logoutBtn');
 if(logoutBtn) {
   logoutBtn.addEventListener('click',e=>{
     e.preventDefault();
+    localStorage.removeItem('rn_user'); // Clear persistence
+    isLoggedIn = false;
+    loggedInName = '';
     if(loginBtn) loginBtn.style.display='';
     if(signupBtn) signupBtn.style.display='';
     if(profileWrap) profileWrap.style.display='none';
@@ -402,6 +406,14 @@ if(logoutBtn) {
     if(nameItem)nameItem.textContent='';
   });
 }
+
+// ── RESTORE SESSION ON LOAD ──
+document.addEventListener('DOMContentLoaded', () => {
+  const storedUser = localStorage.getItem('rn_user');
+  if (storedUser) {
+    activateProfile(storedUser);
+  }
+});
 
 // Profile dropdown — click toggle
 const profileIcon=document.getElementById('profileIcon');

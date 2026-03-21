@@ -37,7 +37,7 @@ export function Navbar() {
           <a href="#">Modules</a>
           <ul className="rn-dropdown-menu">
             <li><a href="http://localhost:5001/">Resume Analyzer</a></li>
-            <li><a href="http://localhost:5000/#modules">Resume Converter</a></li>
+            <li><a href="http://localhost:5004/">Resume Builder</a></li>
             <li><a href="http://localhost:5002/">Interview Q Prediction</a></li>
           </ul>
         </li>

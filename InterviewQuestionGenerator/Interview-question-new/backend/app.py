@@ -19,6 +19,14 @@ app = Flask(__name__)
 # Allow any origin for local dev
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 
+@app.errorhandler(400)
+def bad_request(e):
+    return jsonify({"error": "Bad request", "detail": str(e)}), 400
+
+@app.errorhandler(500)
+def internal_error(e):
+    return jsonify({"error": "Internal server error", "detail": str(e)}), 500
+
 @app.route('/api/health', methods=['GET'])
 def health():
     return jsonify({ "status": "ok", "message": "Backend is running" })
@@ -46,17 +54,19 @@ def upload_resume():
 
 @app.route('/api/generate-questions', methods=['POST'])
 def generate_questions():
-    data = request.json
+    data = request.get_json(silent=True) or {}
     resume_text = data.get('resume_text')
     
     if not resume_text:
-        return jsonify({"error": "No resume text provided"}), 400
+        return jsonify({"error": "No resume text provided. Make sure Content-Type is application/json."}), 400
     
     try:
         questions = generate_interview_questions(resume_text)
+        if isinstance(questions, dict) and 'error' in questions:
+            return jsonify(questions), 500
         return jsonify(questions)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5003)
+    app.run(debug=True, port=5003, use_reloader=False)
