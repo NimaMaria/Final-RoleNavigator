@@ -1,5 +1,6 @@
 const { spawn } = require('child_process');
 const path = require('path');
+const fs = require('fs');
 
 const services = [
   {
@@ -24,14 +25,41 @@ const services = [
     name: 'Interview Backend (5003)',
     cwd: path.join(__dirname, 'InterviewQuestionGenerator', 'Interview-question-new', 'backend'),
     command: 'python',
-    args: ['app.py']
+    args: ['app.py'],
+    getCommand: (cwd) => {
+      const winPath = path.join(cwd, 'venv', 'Scripts', 'python.exe');
+      const unixPath = path.join(cwd, 'venv', 'bin', 'python');
+      if (fs.existsSync(winPath)) return winPath;
+      if (fs.existsSync(unixPath)) return unixPath;
+      return 'python';
+    }
+  },
+  {
+    name: 'Resume Builder Frontend (5004)',
+    cwd: path.join(__dirname, 'resume-builder', 'frontend'),
+    command: 'npm',
+    args: ['run', 'dev']
+  },
+  {
+    name: 'Resume Builder Backend (5005)',
+    cwd: path.join(__dirname, 'resume-builder', 'backend'),
+    command: 'python',
+    args: ['app.py'],
+    getCommand: (cwd) => {
+      const winPath = path.join(cwd, 'venv', 'Scripts', 'python.exe');
+      const unixPath = path.join(cwd, 'venv', 'bin', 'python');
+      if (fs.existsSync(winPath)) return winPath;
+      if (fs.existsSync(unixPath)) return unixPath;
+      return 'python';
+    }
   }
 ];
 
 console.log('🚀 Starting RoleNavigator Ecosystem...\n');
 
 services.forEach(service => {
-  const proc = spawn(service.command, service.args, {
+  const cmd = service.getCommand ? service.getCommand(service.cwd) : service.command;
+  const proc = spawn(cmd, service.args, {
     cwd: service.cwd,
     shell: true,
     stdio: 'inherit'
