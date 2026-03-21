@@ -5,8 +5,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
     <title>RoleNavigator - Resume Analyzer</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  </head>
+  
+<style id="rn-global-bg-style">
+  body {
+    background: #edf3ff !important;
+    overflow-x: hidden !important;
+  }
+  body::before {
+    content: '' !important;
+    position: fixed !important;
+    inset: 0 !important;
+    background: radial-gradient(ellipse 900px 600px at 78% -8%, rgba(96,165,250,.18) 0%, transparent 60%),
+                radial-gradient(ellipse 500px 400px at -8% 55%, rgba(59,130,246,.11) 0%, transparent 55%),
+                linear-gradient(158deg, #e2eeff 0%, #f0f6ff 45%, #ffffff 100%) !important;
+    pointer-events: none !important;
+    z-index: -2 !important;
+  }
+  .bg-shape { position: fixed; filter: blur(100px); z-index: -1; animation: float 12s ease-in-out infinite; pointer-events: none; }
+  .shape-1 { width: 600px; height: 600px; background: rgba(59,130,246,.15); top: -100px; left: -100px; border-radius: 50%; }
+  .shape-2 { width: 500px; height: 500px; background: rgba(147,197,253,.15); bottom: 10%; right: -50px; border-radius: 50%; animation-delay: -6s; }
+  .shape-3 { width: 400px; height: 400px; background: rgba(37,99,235,.08); top: 40%; left: 20%; border-radius: 50%; animation-duration: 15s; }
+  .glass-overlay { position: fixed; inset: 0; background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjAuMDUiLz4KPC9zdmc+'); z-index: -1; opacity: .6; pointer-events: none; }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+  }
+  #root {
+    position: relative;
+    z-index: 1;
+  }
+</style>
+</head>
   <body>
+
+  <div class="bg-shape shape-1" id="rn-global-bg-s1"></div>
+  <div class="bg-shape shape-2" id="rn-global-bg-s2"></div>
+  <div class="bg-shape shape-3" id="rn-global-bg-s3"></div>
+  <div class="glass-overlay" id="rn-global-bg-glass"></div>
+
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
     <!-- This is a replit script which adds a banner on the top of the page when opened in development mode outside the replit environment -->
