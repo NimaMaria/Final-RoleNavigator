@@ -44,8 +44,24 @@ export default function InterviewCoach() {
     }
   };
 
+  const onReset = () => {
+    setFile(null);
+    setResults(null);
+    setError("");
+    setLoading(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <div className="page">
+      <button 
+        className="btn-new"
+        onClick={onReset}
+        title="Start fresh with a new interview"
+      >
+        <span style={{ fontSize: '20px', fontWeight: 'bold' }}>+</span> New Interview
+      </button>
+
       <header className="hero">
         <h1 className="heroTitle" style={{ color: "var(--blue)" }}>Generate Interview Questions</h1>
         <p className="heroSub">

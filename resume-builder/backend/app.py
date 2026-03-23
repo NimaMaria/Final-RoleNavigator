@@ -15,7 +15,7 @@ from groq import Groq
 app = Flask(__name__)
 CORS(app)
 
-print("✅ Running app from:", __file__)
+print("Running app from:", __file__)
 
 # ----------------------------
 # Config
@@ -597,11 +597,25 @@ Return ONLY JSON.
     )
 
     try:
+        import re
+        # Try to find JSON surrounded by ```json ... ```
+        match = re.search(r"```(?:json)?\s*(.*?)\s*```", content_clean, re.DOTALL | re.IGNORECASE)
+        if match:
+            extracted = match.group(1).strip()
+        else:
+            # Otherwise extract anything between first { and last }
+            start = content_clean.find("{")
+            end = content_clean.rfind("}")
+            if start != -1 and end != -1:
+                extracted = content_clean[start:end+1]
+            else:
+                extracted = content_clean
+
         print(f"--- [groq_generate_resume_json] Attempting JSON parse...")
-        return json.loads(content_clean)
+        return json.loads(extracted)
     except Exception as e:
         print(f"--- [groq_generate_resume_json] Standard JSON parse failed: {str(e)}")
-        # Fallback: extract JSON from larger text output
+        # Fallback handling
 
         start = content_clean.find("{")
         end = content_clean.rfind("}")
@@ -611,6 +625,12 @@ Return ONLY JSON.
             print("--- END ---")
             raise RuntimeError("Groq did not return JSON.")
         json_str = content_clean[start : end + 1]
+        
+        # Robustly escape invalid backslashes to prevent "Invalid \escape" errors
+        # This matches a backslash that is NOT followed by a valid JSON escape char
+        import re
+        json_str = re.sub(r'\\(?![/"\\bfnrtu])', r'\\\\', json_str)
+        
         try:
             return json.loads(json_str)
         except Exception as e:
@@ -635,6 +655,7 @@ def api_generate_pdf():
 
     data = request.get_json(silent=True) or {}
     resume_json = data.get("resumeData")
+    print(f"DEBUG /api/generate-pdf: Received resumeData? -> {bool(resume_json)}")
 
     if not resume_json:
         # Fallback to the one-shot extraction flow if no structured data provided
